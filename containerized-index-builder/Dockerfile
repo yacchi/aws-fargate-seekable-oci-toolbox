@@ -2,7 +2,8 @@ FROM public.ecr.aws/docker/library/alpine:latest as socicli
 
 ARG SOCIVER=0.4.0
 ARG BUILDARCH
-RUN wget https://github.com/awslabs/soci-snapshotter/releases/download/v$SOCIVER/soci-snapshotter-v$SOCIVER-linux-$BUILDARCH-static.tar.gz && \
+RUN ARCH=${BUILDARCH:-$(uname -m | sed 's/amd64/x86_64/;s/aarch64/arm64/')} && \
+    wget https://github.com/awslabs/soci-snapshotter/releases/download/v$SOCIVER/soci-snapshotter-v$SOCIVER-linux-$ARCH-static.tar.gz && \
     tar -zxvf soci-snapshotter-v$SOCIVER-linux-$BUILDARCH-static.tar.gz soci
 
 FROM public.ecr.aws/amazonlinux/amazonlinux:2
@@ -10,9 +11,7 @@ FROM public.ecr.aws/amazonlinux/amazonlinux:2
 RUN yum install -y \
     unzip
 
-# Replace with the relevant architecture
-ENV ARCH=aarch64
-RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-$ARCH.zip" -o "awscliv2.zip" && \
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-$(uname -m).zip" -o "awscliv2.zip" && \
     unzip awscliv2.zip && \
     ./aws/install
 
