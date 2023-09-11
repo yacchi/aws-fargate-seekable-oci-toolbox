@@ -1,0 +1,22 @@
+# docker compose run --build --rm --remove-orphans builder IMAGE_REF [OPTIONS]
+# docker compose down -v --remove-orphans
+services:
+  builder:
+    build:
+        context: .
+        dockerfile: Dockerfile
+    image: soci-index-builder:latest
+    privileged: true
+    environment:
+      AWS_REGION: ${AWS_REGION:-}
+    volumes:
+      - type: volume
+        source: containerd
+        target: /var/lib/containerd
+      - type: bind
+        source: ${HOME}/.aws
+        target: /root/.aws
+    tmpfs:
+      - /var/lib/soci-snapshotter-grpc
+volumes:
+  containerd:

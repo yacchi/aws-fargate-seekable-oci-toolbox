@@ -9,7 +9,8 @@ RUN ARCH=${BUILDARCH:-$(uname -m | sed 's/amd64/x86_64/;s/aarch64/arm64/')} && \
 FROM public.ecr.aws/amazonlinux/amazonlinux:2
 
 RUN yum install -y \
-    unzip
+    unzip \
+    jq
 
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-$(uname -m).zip" -o "awscliv2.zip" && \
     unzip awscliv2.zip && \
